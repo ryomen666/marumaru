@@ -1,0 +1,497 @@
+// $cBlue: rgba(112, 170, 236, 0.561);
+$cBlue: black;
+$cWhite: white;
+
+// TODO:メニューで領域外を押下時に閉じる
+// メニューボタンとSNSアイコンが被らないようにする。
+// 画像が順番に出る仕組みを理解する←応用できそう。
+// レスポンシブでタイトル文字小さくする。
+
+body {
+  background: $cWhite;
+  font-family: "Marcellus", serif, "游ゴシック体", YuGothic, "游ゴシック Medium",
+    "Yu Gothic Medium", "游ゴシック", "Yu Gothic", "メイリオ", sans-serif;
+  color: #333;
+  font-size: 1rem;
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  word-wrap: break-word;
+}
+
+@media screen and (max-width: 768px) {
+  body {
+    font-size: 0.8rem;
+  }
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: $cBlue;
+  outline: none;
+}
+
+a:hover,
+a:active {
+  text-decoration: none;
+}
+
+/* header */
+#slider {
+  width: 100%;
+  height: 100vh; /*スライダー全体の縦幅を画面の高さいっぱい（100vh）にする*/
+}
+
+/* heading */
+.heading-block {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  & h1 {
+    font-size: 6vw;
+    letter-spacing: 0.2em;
+    color: $cWhite;
+    line-height: 1;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 1px 2px 3px #808080;
+  }
+  & h2 {
+    font-size: 1.5vw;
+    letter-spacing: 0.2em;
+    color: $cWhite;
+    margin-top: 15px;
+    line-height: 1;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 1px 2px 3px #808080;
+  }
+  #icon {
+    & img {
+      text-align: center;
+      position: relative;
+      margin-top: 90px;
+      width: 200px;
+      border: rgba(48, 48, 48, 0.645) 1px solid;
+      border-radius: 50%;
+      animation: rotate-anime 10s linear infinite;
+      &:hover {
+        animation: rotate-anime 1s linear infinite;
+        transition: 1s;
+      }
+    }
+    &::before {
+      content: "";
+      position: absolute;
+      margin-top: 90px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      box-shadow: 5px 5px 5px 0 rgba(48, 48, 48, 0.645);
+    }
+  }
+}
+@keyframes rotate-anime {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/*横幅が768px以下になった際の指定*/
+@media only screen and (max-width: 768px) {
+  .heading-block h1 {
+    font-size: 2.5em;
+  }
+  .heading-block h2 {
+    font-size: 2em;
+  }
+}
+/* sns icon */
+#sns-icon img {
+  filter: invert(1);
+  width: 30px;
+  transform: rotate(360deg);
+  transition: 0.5s;
+  opacity: 0.8;
+  &:hover {
+    opacity: 1;
+    width: 40px;
+    transform: rotate(-15deg);
+    transition: 0.5s;
+  }
+}
+
+#sns-icon {
+  position: absolute;
+  right: 2%;
+  top: 18%;
+  width: 40px;
+  opacity: 1;
+  & li {
+    margin: 0 0 30px 0;
+    transition: all 200ms ease-in-out;
+  }
+
+  /* ハンバーガーとSNSアイコンが重なったら避ける */
+  .inview {
+    transform: translate(30px, 0px);
+    transition: all 200ms ease-in-out;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #sns-icon {
+    width: 30px;
+  }
+}
+
+/*===========================================================*/
+/* クリックしたらナビが右から左に出現*/
+/*===========================================================*/
+
+/*========= ナビゲーションのためのCSS ===============*/
+
+#g-nav {
+  /*position:fixed;にし、z-indexの数値を大きくして前面へ*/
+  position: fixed;
+  z-index: 999;
+  /*ナビのスタート位置と形状*/
+  top: 0;
+  right: -100%;
+  width: 30%;
+  height: 100vh; /*ナビの高さ*/
+  background: linear-gradient(
+    45deg,
+    rgba(88, 182, 211, 0.7),
+    $cBlue
+  ); /*背景色（グラデーション）*/
+  /*動き*/
+  transition: all 0.6s;
+}
+
+/*アクティブクラスがついたら位置を0に*/
+#g-nav.panelactive {
+  right: 0;
+}
+
+/*ナビゲーションの縦スクロール*/
+#g-nav.panelactive #g-nav-list {
+  /*ナビの数が増えた場合縦スクロール*/
+  position: fixed;
+  z-index: 999;
+  width: 30%;
+  height: 100vh; /*表示する高さ*/
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/*横幅が768px以下になった際の指定*/
+@media only screen and (max-width: 768px) {
+  #g-nav,
+  #g-nav.panelactive #g-nav-list {
+    width: 100%;
+  }
+}
+
+/*ナビゲーション*/
+#g-nav ul {
+  /*ナビゲーション天地中央揃え*/
+  position: absolute;
+  z-index: 999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/*リストのレイアウト設定*/
+
+#g-nav li {
+  list-style: none;
+  text-align: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  text-shadow: 1px 2px 3px #808080;
+}
+
+#g-nav li a {
+  color: $cBlue;
+  text-decoration: none;
+  padding: 10px;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: bold;
+  transition: all 0.5s;
+}
+
+#g-nav li a:hover {
+  color: rgba(210, 252, 112, 0.944);
+  font-size: larger;
+  transition: all 1s;
+}
+
+/*===========================================================*/
+/* ハンバーガーニュー
+/*===========================================================*/
+.openbtn {
+  position: fixed;
+  z-index: 9999; /*ボタンを最前面に*/
+  top: 2%;
+  right: 2%;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  /*×に変化*/
+  & span {
+    display: inline-block;
+    transition: all 0.4s;
+    position: absolute;
+    left: 14px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: black;
+    width: 45%;
+    background-color: white;
+  }
+  & span:nth-of-type(1) {
+    top: 15px;
+  }
+}
+
+.openbtn span:nth-of-type(2) {
+  top: 23px;
+}
+
+.openbtn span:nth-of-type(3) {
+  top: 30px;
+}
+
+.openbtn.active span:nth-of-type(1) {
+  top: 18px;
+  left: 18px;
+  transform: translateY(6px) rotate(-45deg);
+  width: 30%;
+}
+
+.openbtn.active span:nth-of-type(2) {
+  opacity: 0;
+}
+
+.openbtn.active span:nth-of-type(3) {
+  top: 30px;
+  left: 18px;
+  transform: translateY(-6px) rotate(45deg);
+  width: 30%;
+}
+
+/*===========================================================*/
+/* グラデーションが時間変化*/
+/*===========================================================*/
+
+#splash {
+  background: linear-gradient(
+    45deg,
+    #3bade3,
+    #9844b7,
+    #44ea76
+  ); /*グラデーションを定義*/
+  background-size: 200% 200%; /*サイズを大きくひきのばす*/
+  animation: bggradient 20s ease infinite;
+}
+
+@keyframes bggradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/*===========================================================*/
+/* カテゴリ別に画像を並び替える*/
+/*===========================================================*/
+
+/*＝＝＝Muuriのレイアウトのための調整 */
+.grid {
+  position: relative; /*並び替えの基準点を指定*/
+}
+
+/*各画像の横幅などの設定*/
+.item {
+  display: block;
+  position: absolute;
+  width: 33%; /*横並びで3つ表示*/
+  z-index: 1;
+}
+
+/*内側のボックスの高さが崩れないように維持*/
+.item-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 30px;
+}
+
+.item-content a {
+  text-decoration: none;
+}
+
+.item-content span {
+  color: $cBlue;
+  display: block;
+  text-align: center;
+  letter-spacing: 0.05em;
+  padding: 10px 0 0 0;
+}
+
+/*画像の横幅を100%にしてレスポンシブ化*/
+.grid img {
+  width: 100%;
+  height: auto;
+  vertical-align: bottom; /*画像の下にできる余白を削除*/
+}
+
+/*横幅が768px以下になった際の指定*/
+@media only screen and (max-width: 768px) {
+  .item {
+    width: 49.5%; /*横並びで2つ表示*/
+  }
+  .item-content {
+    padding: 10px;
+  }
+}
+
+/*＝＝＝fancyboxサムネイル背景と画像選択時の枠線の指定*/
+.fancybox-thumbs {
+  background: transparent !important;
+}
+
+.fancybox-thumbs__list a:before {
+  border: 6px solid #fa999b;
+}
+
+.fancybox-caption__body {
+  letter-spacing: 0.1em;
+}
+
+/*===========================================================*/
+/* 機能編 5-3-1中心から外に線が伸びる（下部）*/
+/*===========================================================*/
+#sort {
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+.sort-btn {
+  color: $cBlue;
+  display: flex;
+  justify-content: center;
+  margin: 50px 0;
+  list-style: none;
+  text-transform: uppercase;
+}
+
+.sort-btn li {
+  position: relative;
+  cursor: pointer;
+  margin: 0 20px;
+}
+
+.sort-btn li::after {
+  content: "";
+  /*絶対配置で線の位置を決める*/
+  position: absolute;
+  bottom: -5px;
+  left: 25%;
+  /*線の形状*/
+  width: 50%;
+  height: 2px;
+  background: #a0a0a0;
+  /*アニメーションの指定*/
+  transition: all 0.3s;
+  transform: scale(0, 1); /*X方向0、Y方向1*/
+  transform-origin: center top; /*上部中央基点*/
+}
+
+/*現在地とhoverの設定*/
+.sort-btn li.active::after,
+.sort-btn li:hover::after {
+  transform: scale(1, 1); /*X方向にスケール拡大*/
+}
+
+/*横幅が375px以下になった際の指定*/
+@media only screen and (max-width: 375px) {
+  .sort-btn {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .sort-btn li {
+    width: 48%;
+    margin: 0 0 10px 0;
+    text-align: center;
+  }
+}
+
+/*===========================================================*/
+/*  hover時に画像が拡大*/
+/*===========================================================*/
+
+.img-box {
+  overflow: hidden;
+}
+
+.grid img {
+  transform: scale(1);
+  transition: 0.5s ease-in-out;
+  /*移り変わる速さを変更したい場合はこの数値を変更*/
+}
+
+.grid a:hover img {
+  /*hoverした時の変化*/
+  transform: scale(1.1);
+  /*拡大の値を変更したい場合はこの数値を変更*/
+}
+
+/*===========================================================*/
+/*  印象編 4-12 順番に現れる（CSS x jQuery） */
+/*===========================================================*/
+
+.item {
+  opacity: 0;
+}
+
+/*===　印象編 4-1 ふわっ（下から）　==*/
+
+.fadeUp {
+  animation-name: fadeUpAnime;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+  opacity: 0;
+}
+
+/*ギャラリーのプラグインとの兼ね合いでtransform: translateY(100px);は使用せずmarginで代用*/
+@keyframes fadeUpAnime {
+  from {
+    opacity: 0;
+    margin-top: 100px;
+  }
+
+  to {
+    opacity: 1;
+    margin-top: 0;
+  }
+}
